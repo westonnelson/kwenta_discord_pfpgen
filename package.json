@@ -1,0 +1,31 @@
+{
+  "name": "kwenta_discord_pfpgen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/pfpbot.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kethcode/kwenta_discord_pfpgen.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kethcode/kwenta_discord_pfpgen/issues"
+  },
+  "homepage": "https://github.com/kethcode/kwenta_discord_pfpgen#readme",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.25",
+    "discord.js": "^13.8.1",
+    "dotenv": "^16.0.1",
+    "remove.bg": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
+  }
+}
