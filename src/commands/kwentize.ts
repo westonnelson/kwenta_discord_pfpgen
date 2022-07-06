@@ -1,6 +1,13 @@
 require("dotenv").config();
 
-import { BaseCommandInteraction, Client, MessageAttachment } from "discord.js";
+import {
+  BaseCommandInteraction,
+  Client,
+  GuildMember,
+  GuildMemberRoleManager,
+  MessageAttachment,
+  Role,
+} from "discord.js";
 import { Command } from "../Command";
 
 import { RemoveBgError, removeBackgroundFromImageUrl } from "remove.bg";
@@ -8,6 +15,7 @@ import { RemoveBgError, removeBackgroundFromImageUrl } from "remove.bg";
 import { createCanvas, Image } from "@napi-rs/canvas";
 
 import { readFile } from "fs/promises";
+import { userInfo } from "os";
 
 const path = require("path");
 
@@ -30,6 +38,7 @@ const height = 800;
 let limitUses = new Map<string, number>();
 
 async function removeFromImgUrl(url: string, id: string) {
+	
   const outputFile = `${__dirname}/../images/${id}.png`;
   try {
     const result = await removeBackgroundFromImageUrl({
@@ -63,72 +72,92 @@ export const kwentize: Command = {
   description: "Generates a Kwenta-style PFP from your Discord Avatar",
   type: "CHAT_INPUT",
   run: async (client: Client, interaction: BaseCommandInteraction) => {
-    let uses: number = 0;
-    if (limitUses.has(interaction.user.id)) {
-      uses = limitUses.get(interaction.user.id) || 0;
-    }
 
-    uses = uses + 1;
-    limitUses.set(interaction.user.id, uses);
+    try {
+      let uses: number = 0;
+      if (limitUses.has(interaction.user.id)) {
+        uses = limitUses.get(interaction.user.id) || 0;
+      }
 
-    let content: string = "";
-    if (uses > 3) {
-      content = "You have already used all 3/3 of your Kwentize PFP calls.";
-	  await interaction.followUp({
+      uses = uses + 1;
+      limitUses.set(interaction.user.id, uses);
+
+      let content: string = "";
+      if (uses > 3) {
+        content = "You have already used all 3/3 of your Kwentize PFP calls.";
+        await interaction.followUp({
+          ephemeral: true,
+          content,
+        });
+        return;
+      } else {
+        content = `You have now used ${uses}/3 of your Kwentize PFP calls.`;
+      }
+
+      // Add Role
+      const roleLeague = interaction.guild?.roles.cache.find(
+        (r) => r.name === "The League"
+      ) as Role;
+      const member = interaction.member as GuildMember;
+      member?.roles.add(roleLeague);
+
+      // Draw New PFP
+      const canvas = createCanvas(width, height);
+      const context = canvas.getContext("2d");
+
+      // Draw Background
+      const background = await readFile(path_back);
+      const backgroundImage = new Image();
+      backgroundImage.src = background;
+      context.drawImage(backgroundImage, 0, 0, width, height);
+
+      // Draw Top Chevron
+      const topback = await readFile(path_topback);
+      const topbackImage = new Image();
+      topbackImage.src = topback;
+      context.drawImage(topbackImage, 0, 0, width, height);
+
+      // Get the Avatar and Remove It's background
+      const avatarURL = interaction.user.avatarURL({ format: "png" }) as string;
+      console.log(avatarURL);
+      const cleanedAvatarPath = await removeFromImgUrl(
+        avatarURL,
+        interaction.user.id
+      );
+
+      // Draw the Cleaned Avatar
+      const avatar = await readFile(cleanedAvatarPath);
+      const avatarImage = new Image();
+      avatarImage.src = avatar;
+
+      context.drawImage(
+        avatarImage,
+        width * 0.08,
+        height * 0.08 - 8,
+        width - width * 0.16,
+        height - height * 0.16 - 8
+      );
+
+      // Draw the Front Chevron
+      const bottomfront = await readFile(path_bottomfront);
+      const bottomfrontImage = new Image();
+      bottomfrontImage.src = bottomfront;
+      context.drawImage(bottomfrontImage, 0, 0, width, height);
+
+      // Build File Attachment
+      const attachment = new MessageAttachment(
+        canvas.toBuffer("image/png"),
+        "kwenta-profile-image.png"
+      );
+
+      // Send File Attachemnt and Content Text
+      await interaction.followUp({
         ephemeral: true,
         content,
+        files: [attachment],
       });
-      return;
-    } else {
-      content = `You have now used ${uses}/3 of your Kwentize PFP calls.`;
+    } catch (e) {
+      console.log(e);
     }
-
-    const canvas = createCanvas(width, height);
-    const context = canvas.getContext("2d");
-
-    const background = await readFile(path_back);
-    const backgroundImage = new Image();
-    backgroundImage.src = background;
-    context.drawImage(backgroundImage, 0, 0, width, height);
-
-    const topback = await readFile(path_topback);
-    const topbackImage = new Image();
-    topbackImage.src = topback;
-    context.drawImage(topbackImage, 0, 0, width, height);
-
-    const avatarURL = interaction.user.avatarURL({ format: "png" }) as string;
-    console.log(avatarURL);
-    const cleanedAvatarPath = await removeFromImgUrl(
-      avatarURL,
-      interaction.user.id
-    );
-
-    const avatar = await readFile(cleanedAvatarPath);
-    const avatarImage = new Image();
-    avatarImage.src = avatar;
-
-    context.drawImage(
-      avatarImage,
-      width * 0.08,
-      height * 0.08 - 8,
-      width - width * 0.16,
-      height - height * 0.16 - 8
-    );
-
-    const bottomfront = await readFile(path_bottomfront);
-    const bottomfrontImage = new Image();
-    bottomfrontImage.src = bottomfront;
-    context.drawImage(bottomfrontImage, 0, 0, width, height);
-
-    const attachment = new MessageAttachment(
-      canvas.toBuffer("image/png"),
-      "kwenta-profile-image.png"
-    );
-
-    await interaction.followUp({
-      ephemeral: true,
-      content,
-      files: [attachment],
-    });
   },
 };

@@ -11,17 +11,17 @@ export default (client: Client): void => {
 
 const handleSlashCommand = async (
   client: Client,
-  interfaction: BaseCommandInteraction
+  interaction: BaseCommandInteraction
 ): Promise<void> => {
 
-	const slashCommand = Commands.find(c => c.name === interfaction.commandName);
+	const slashCommand = Commands.find(c => c.name === interaction.commandName);
 	if(!slashCommand) {
-		interfaction.followUp({ content: "An error has occured" });
+		interaction.followUp({ content: "An error has occured" });
 		return;
 	}
 
-	await interfaction.deferReply();
+	await interaction.deferReply();
 
-	slashCommand.run(client, interfaction);
+	slashCommand.run(client, interaction);
 
 };

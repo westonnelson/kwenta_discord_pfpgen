@@ -1,4 +1,4 @@
-import { Client, ClientOptions } from "discord.js";
+import { Client, ClientOptions, Intents } from "discord.js";
 
 require("dotenv").config();
 const token = process.env.DISCORD_TOKEN;
@@ -9,7 +9,7 @@ import interactionCreate from "./listeners/interactionCreate";
 console.log("Bot is starting...");
 
 const client = new Client({
-  intents: [],
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS],
 });
 
 ready(client);
