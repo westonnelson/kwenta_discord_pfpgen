@@ -25,7 +25,7 @@ const path_back = path.resolve(
 );
 const path_topback = path.resolve(
   __dirname,
-  "../images/kwenta-pfp-border-topback3.png"
+  "../images/kwenta-pfp-border-topback4.png"
 );
 const path_bottomfront = path.resolve(
   __dirname,
