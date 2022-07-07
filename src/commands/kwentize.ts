@@ -38,14 +38,14 @@ const height = 800;
 let limitUses = new Map<string, number>();
 
 async function removeFromImgUrl(url: string, id: string) {
-	
+
   const outputFile = `${__dirname}/../images/${id}.png`;
   try {
     const result = await removeBackgroundFromImageUrl({
       url,
       apiKey: process.env.REMOVE_BG_API_KEY ?? "",
-      size: "regular",
-      type: "person",
+      size: "auto",
+      type: "auto",
       format: "png",
       outputFile,
     });
