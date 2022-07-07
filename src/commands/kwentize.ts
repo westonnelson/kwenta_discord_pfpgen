@@ -132,10 +132,10 @@ export const kwentize: Command = {
 
       context.drawImage(
         avatarImage,
-        width * 0.06,
-        height * 0.06 - 12,
-        width - width * 0.12,
-        height - height * 0.12 - 12
+        width * 0.05,
+        height * 0.05 - 16,
+        width - width * 0.10,
+        height - height * 0.10 - 16
       );
 
       // Draw the Front Chevron
