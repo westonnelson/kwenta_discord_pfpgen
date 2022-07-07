@@ -25,11 +25,11 @@ const path_back = path.resolve(
 );
 const path_topback = path.resolve(
   __dirname,
-  "../images/kwenta-pfp-border-topback2.png"
+  "../images/kwenta-pfp-border-topback3.png"
 );
 const path_bottomfront = path.resolve(
   __dirname,
-  "../images/kwenta-pfp-border-bottomfront2.png"
+  "../images/kwenta-pfp-border-bottomfront3.png"
 );
 
 const width = 800;
@@ -132,10 +132,10 @@ export const kwentize: Command = {
 
       context.drawImage(
         avatarImage,
-        width * 0.08,
-        height * 0.08 - 8,
-        width - width * 0.16,
-        height - height * 0.16 - 8
+        width * 0.06,
+        height * 0.06 - 12,
+        width - width * 0.12,
+        height - height * 0.12 - 12
       );
 
       // Draw the Front Chevron
