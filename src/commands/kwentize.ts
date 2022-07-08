@@ -14,7 +14,7 @@ import { RemoveBgError, removeBackgroundFromImageUrl } from "remove.bg";
 
 import { createCanvas, Image } from "@napi-rs/canvas";
 
-import { readFile } from "fs/promises";
+import { readFile, unlink } from "fs/promises";
 import { userInfo } from "os";
 
 const path = require("path");
@@ -157,6 +157,9 @@ export const kwentize: Command = {
         content,
         files: [attachment],
       });
+
+	  await unlink(cleanedAvatarPath);
+
     } catch (e) {
       console.log(e);
     }
